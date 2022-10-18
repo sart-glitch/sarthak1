@@ -1,6 +1,3 @@
-
-
-FROM java:8  
-EXPOSE 8080  
-ADD target/Addressbook.war  Addressbook.war
-ENTRYPOINT ["java","-war","/Addressbook.war"] 
+FROM tomcat
+COPY target/Addressbook.war /usr/local/tomcat/webapps
+CMD ["catalina.sh", "run"]
