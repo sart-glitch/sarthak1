@@ -1,13 +1,6 @@
 
 
-FROM tomcat
-
-MAINTAINER richard
-
-RUN apt-get update && apt-get -y upgrade
-
-WORKDIR /usr/local/tomcat
-
-COPY target/Addressbook.war  Addressbook.war
-
-EXPOSE 8080
+FROM java:8  
+EXPOSE 8080  
+ADD target/Addressbook.war  Addressbook.war
+ENTRYPOINT ["java","-war","/Addressbook.war"] 
