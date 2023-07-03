@@ -1,0 +1,46 @@
+pipeline{
+    
+    agent any
+    stages{
+       stage("timestamp"){
+            steps{
+                script{
+                env.TIMESTAMP = sh (
+                                script: 'date +%Y%m%d%H%M%S',
+                                returnStdout: true
+                              ).trim()
+                }
+            }
+        }
+        stage("print"){
+            steps{
+                echo TIMESTAMP
+            }
+            
+        }
+    
+        stage("checkout"){
+            steps{
+                cleanWs()
+                git credentialsId: 'sart-glitch', url: 'https://github.com/sart-glitch/helm-repo-wm-k8s.git'
+                sh '''
+                sed -i "s/tag: .*/tag: ${TIMESTAMP}/" values.yaml
+               
+                '''
+                }
+        }
+        stage("push"){
+            steps{
+                withCredentials([gitUsernamePassword(credentialsId: 'sart-glitch-new', gitToolName: 'Default')]) {
+               sh ''' 
+                git add .
+                git commit -m "push"
+                git push origin master
+                '''
+                }
+            }
+        }
+        
+    }
+
+}
